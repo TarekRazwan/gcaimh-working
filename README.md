@@ -265,3 +265,4 @@ This project is licensed under the MIT License - see LICENSE file for details.
 - SUNY for supporting this research
 - Google Cloud for AI/ML infrastructure
 - Evidence-based treatment manual authors
+
