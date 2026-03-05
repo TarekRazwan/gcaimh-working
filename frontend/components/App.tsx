@@ -30,10 +30,12 @@ import PatientSummary from './PatientSummary';
 import Patients from './Patients';
 import Patient from './Patient';
 import LoginPage from './LoginPage';
+import ClientPortalManagementPage from './therapist/clientPortal/ClientPortalManagementPage';
 import { useAuth } from '../contexts/AuthContext';
 import { mockPatients } from '../utils/mockPatients';
 import { Patient as PatientType, SessionSummary } from '../types/types';
 import { useTherapyAnalysis } from '../hooks/useTherapyAnalysis';
+import { featureFlags } from '../utils/featureFlags';
 
 const App: React.FC = () => {
   const { currentUser } = useAuth();
@@ -69,11 +71,11 @@ const App: React.FC = () => {
   const [lastSessionId, setLastSessionId] = useState('');
 
   // Navigation state
-  const [currentView, setCurrentView] = useState<'landing' | 'patients' | 'schedule' | 'newSession' | 'patient' | 'therSummary' | 'patientSummary'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'patients' | 'schedule' | 'newSession' | 'patient' | 'therSummary' | 'patientSummary' | 'clientPortal'>('landing');
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const [sessionPatientId, setSessionPatientId] = useState<string | null>(null);
   const [navigationHistory, setNavigationHistory] = useState<Array<{
-    view: 'landing' | 'patients' | 'schedule' | 'newSession' | 'patient' | 'therSummary' | 'patientSummary';
+    view: 'landing' | 'patients' | 'schedule' | 'newSession' | 'patient' | 'therSummary' | 'patientSummary' | 'clientPortal';
     patientId?: string | null;
     sessionPatientId?: string | null;
   }>>([]);
@@ -186,6 +188,12 @@ const App: React.FC = () => {
     setCurrentView('patientSummary');
   };
 
+  const handleNavigateToClientPortal = (patientId: string) => {
+    pushToHistory(currentView, selectedPatientId);
+    setSelectedPatientId(patientId);
+    setCurrentView('clientPortal');
+  };
+
   const handleGoBack = () => {
     if (navigationHistory.length > 0) {
       const previousView = navigationHistory[navigationHistory.length - 1];
@@ -227,6 +235,18 @@ const App: React.FC = () => {
         patientId={selectedPatientId}
         onNavigateBack={handleGoBack}
         onNavigateToNewSession={handleNavigateToNewSession}
+        onNavigateToClientPortal={featureFlags.THERAPIST_CLIENT_PORTAL_BRIDGE ? handleNavigateToClientPortal : undefined}
+      />
+    );
+  }
+
+  if (currentView === 'clientPortal' && selectedPatientId) {
+    const portalPatient = patients.find(p => p.id === selectedPatientId);
+    return (
+      <ClientPortalManagementPage
+        clientId={selectedPatientId}
+        clientName={portalPatient?.name}
+        onNavigateBack={handleGoBack}
       />
     );
   }

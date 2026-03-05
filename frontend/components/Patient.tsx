@@ -44,6 +44,7 @@ import {
   Add,
   Edit,
   Delete,
+  OpenInNew,
 } from '@mui/icons-material';
 import { Patient as PatientType, SessionHistory } from '../types/types';
 
@@ -52,12 +53,13 @@ interface PatientProps {
   patientId: string;
   onNavigateBack: () => void;
   onNavigateToNewSession: (patientId?: string) => void;
+  onNavigateToClientPortal?: (patientId: string) => void;
 }
 
 type SortableColumn = 'date' | 'duration' | 'summary';
 type SortDirection = 'asc' | 'desc';
 
-const Patient: React.FC<PatientProps> = ({ patients, patientId, onNavigateBack, onNavigateToNewSession }) => {
+const Patient: React.FC<PatientProps> = ({ patients, patientId, onNavigateBack, onNavigateToNewSession, onNavigateToClientPortal }) => {
   const patient = patients.find(p => p.id === patientId);
   const [sortColumn, setSortColumn] = useState<SortableColumn>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -272,6 +274,23 @@ const Patient: React.FC<PatientProps> = ({ patients, patientId, onNavigateBack, 
                   </Typography>
                 </Box>
               </Box>
+              {onNavigateToClientPortal && (
+                <Button
+                  variant="outlined"
+                  startIcon={<OpenInNew />}
+                  onClick={() => onNavigateToClientPortal(patientId)}
+                  sx={{
+                    borderRadius: 2,
+                    px: 2.5,
+                    py: 1.5,
+                    borderColor: '#0b57d0',
+                    color: '#0b57d0',
+                    '&:hover': { borderColor: '#00639b', bgcolor: '#e8f0fe' },
+                  }}
+                >
+                  Client Portal
+                </Button>
+              )}
               <Button
                 variant="contained"
                 startIcon={<Add />}
