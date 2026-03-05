@@ -30,7 +30,6 @@ import {
   FiberManualRecord,
   ArrowBack,
   Search,
-  CallSplit,
   Route,
   Mic,
   Pause,
@@ -66,7 +65,6 @@ import ActionDetailsPanel from './ActionDetailsPanel';
 import EvidenceTab from './EvidenceTab';
 import PathwayTab from './PathwayTab';
 import GuidanceTab from './GuidanceTab';
-import AlternativesTab from './AlternativesTab';
 import TranscriptDisplay from './TranscriptDisplay';
 import SessionSummaryModal from './SessionSummaryModal';
 import RationaleModal from './RationaleModal';
@@ -178,7 +176,7 @@ const NewTherSession: React.FC<NewTherSessionProps> = ({
   const [chartDataHistory, setChartDataHistory] = useState<ChartDataPoint[]>([]);
   
   // UI state
-  const [activeTab, setActiveTab] = useState<'guidance' | 'evidence' | 'pathway' | 'alternatives'>('guidance');
+  const [activeTab, setActiveTab] = useState<'guidance' | 'pathway'>('guidance');
   const [selectedAction, setSelectedAction] = useState<any>(null);
   const [selectedCitation, setSelectedCitation] = useState<any>(null);
   const [isContraindication, setIsContraindication] = useState(false);
@@ -1371,7 +1369,6 @@ const NewTherSession: React.FC<NewTherSessionProps> = ({
             {[
               { key: 'guidance', label: 'Guidance', icon: <Explore sx={{ fontSize: 24, color: '#444746' }} /> },
               { key: 'pathway', label: 'Pathway', icon: <Route sx={{ fontSize: 24, color: '#444746' }} /> },
-              { key: 'alternatives', label: 'Alternatives', icon: <CallSplit sx={{ fontSize: 24, color: '#444746' }} /> },
             ].map((item) => (
                 <Box
                   key={item.key}
@@ -1386,7 +1383,7 @@ const NewTherSession: React.FC<NewTherSessionProps> = ({
                     '&:hover': {
                       backgroundColor: 'rgba(0, 0, 0, 0.04)',
                     },
-                    borderBottom: item.key !== 'alternatives' ? '1px solid rgba(196, 199, 197, 0.3)' : 'none',
+                    borderBottom: item.key !== 'pathway' ? '1px solid rgba(196, 199, 197, 0.3)' : 'none',
                   }}
                   onClick={() => setActiveTab(item.key as any)}
                 >
@@ -1438,18 +1435,6 @@ const NewTherSession: React.FC<NewTherSessionProps> = ({
                 techniques={sessionMetrics.techniques_detected}
                 currentAlert={getCurrentAlert()}
                 pathwayIndicators={pathwayIndicators}
-              />
-            )}
-            {activeTab === 'alternatives' && (
-              <AlternativesTab 
-                alternativePathways={pathwayGuidance.alternative_pathways}
-                citations={citations}
-                onCitationClick={handleCitationClick}
-                hasReceivedComprehensiveAnalysis={hasReceivedComprehensiveAnalysis}
-                waitingForComprehensiveJobId={waitingForComprehensiveJobId}
-                displayedComprehensiveJobId={displayedComprehensiveJobId}
-                displayedRealtimeJobId={displayedRealtimeJobId}
-                currentAlert={getCurrentAlert()}
               />
             )}
           </Box>
@@ -2116,6 +2101,7 @@ const NewTherSession: React.FC<NewTherSessionProps> = ({
         onRetry={requestSummary}
         sessionId={sessionId}
         citations={citations}
+        alternativePathways={pathwayGuidance.alternative_pathways}
       />
 
       <RationaleModal

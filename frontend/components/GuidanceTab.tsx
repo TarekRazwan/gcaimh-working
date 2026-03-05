@@ -157,50 +157,46 @@ const GuidanceTab: React.FC<GuidanceTabProps> = ({ currentGuidance, onActionClic
       {/* Action Cards */}
       <Box sx={{ display: 'flex', gap: 3 }}>
         {/* Immediate Actions */}
-        {currentGuidance.immediateActions.length > 0 && (
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" sx={{
-              fontSize: '13px',
-              fontWeight: 700,
-              color: '#128937',
-              mb: 1.5,
-              letterSpacing: '0.5px',
-              textTransform: 'uppercase',
-            }}>
-              Immediate Actions
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              {currentGuidance.immediateActions.map((action, index) => (
-                <Box key={index} sx={{ flex: 1 }}>
-                  <ActionCard action={action} />
-                </Box>
-              ))}
-            </Box>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="body2" sx={{
+            fontSize: '13px',
+            fontWeight: 700,
+            color: '#128937',
+            mb: 1.5,
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+          }}>
+            Immediate Actions
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {currentGuidance.immediateActions.map((action, index) => (
+              <Box key={index} sx={{ flex: 1 }}>
+                <ActionCard action={action} />
+              </Box>
+            ))}
           </Box>
-        )}
+        </Box>
 
         {/* Contraindications */}
-        {currentGuidance.contraindications.length > 0 && (
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" sx={{
-              fontSize: '13px',
-              fontWeight: 700,
-              color: '#b3261e',
-              mb: 1.5,
-              letterSpacing: '0.5px',
-              textTransform: 'uppercase',
-            }}>
-              Contraindications
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              {currentGuidance.contraindications.map((action, index) => (
-                <Box key={index} sx={{ flex: 1 }}>
-                  <ActionCard action={action} isContraindication />
-                </Box>
-              ))}
-            </Box>
+        <Box sx={{ flex: 1 }}>
+          <Typography variant="body2" sx={{
+            fontSize: '13px',
+            fontWeight: 700,
+            color: '#b3261e',
+            mb: 1.5,
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+          }}>
+            Contraindications
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            {currentGuidance.contraindications.map((action, index) => (
+              <Box key={index} sx={{ flex: 1 }}>
+                <ActionCard action={action} isContraindication />
+              </Box>
+            ))}
           </Box>
-        )}
+        </Box>
       </Box>
     </Box>
   );
