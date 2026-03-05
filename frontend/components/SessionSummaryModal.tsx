@@ -412,7 +412,7 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
 
             <Divider />
 
-            {/* Progress & Areas for Improvement */}
+            {/* Progress & Areas for Consideration */}
             <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
               <Box>
                 <Typography variant="h6" gutterBottom sx={{ fontSize: '1.35rem' }}>
@@ -438,7 +438,7 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
 
               <Box>
                 <Typography variant="h6" gutterBottom sx={{ fontSize: '1.35rem' }}>
-                  Areas for Improvement
+                  Areas for Consideration
                 </Typography>
                 {safe.areas_for_improvement.length > 0 ? (
                   <List dense>

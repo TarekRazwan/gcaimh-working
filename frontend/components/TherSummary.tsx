@@ -263,7 +263,7 @@ const TherSummary: React.FC<TherSummaryProps> = ({
 
                 <Divider sx={{ backgroundColor: '#c4c7c5' }} />
 
-                {/* Areas for Improvement */}
+                {/* Areas for Consideration */}
                 <Box sx={{ backgroundColor: 'white', px: 0, py: 0 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                     <Typography variant="h6" sx={{ 
@@ -271,7 +271,7 @@ const TherSummary: React.FC<TherSummaryProps> = ({
                       fontWeight: 400, 
                       color: '#1f1f1f' 
                     }}>
-                      Areas for Improvement
+                      Areas for Consideration
                     </Typography>
                     <Warning sx={{ fontSize: 24, color: '#b16300' }} />
                   </Box>
