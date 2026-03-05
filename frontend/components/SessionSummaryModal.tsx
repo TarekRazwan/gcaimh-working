@@ -169,7 +169,14 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
     duration_minutes: 0,
     session_date: new Date().toISOString(),
   };
-  const safe = summary ? { ...defaults, ...summary } : null;
+  const safe = summary ? {
+    ...defaults,
+    ...summary,
+    risk_assessment: {
+      ...defaults.risk_assessment,
+      ...(summary.risk_assessment || {}),
+    },
+  } : null;
 
   return (
     <Dialog

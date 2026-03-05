@@ -235,7 +235,7 @@ const PathwayIndicator: React.FC<PathwayIndicatorProps> = ({
             }
           })}
           <Typography variant="caption" fontWeight={600}>
-            {effectiveness.charAt(0).toUpperCase() + effectiveness.slice(1)}
+            {(effectiveness || 'unknown').charAt(0).toUpperCase() + (effectiveness || 'unknown').slice(1)}
           </Typography>
         </Box>
       </Box>

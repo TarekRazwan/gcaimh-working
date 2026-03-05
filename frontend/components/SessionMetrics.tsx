@@ -100,7 +100,7 @@ const SessionMetrics: React.FC<SessionMetricsProps> = ({ metrics }) => {
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
               <Chip
-                label={metrics.therapeutic_alliance.charAt(0).toUpperCase() + metrics.therapeutic_alliance.slice(1)}
+                label={(metrics.therapeutic_alliance || 'unknown').charAt(0).toUpperCase() + (metrics.therapeutic_alliance || 'unknown').slice(1)}
                 size="small"
                 sx={{ 
                   fontWeight: 600,
