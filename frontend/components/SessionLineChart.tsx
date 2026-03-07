@@ -60,7 +60,7 @@ const SessionLineChart: React.FC<SessionLineChartProps> = ({
   }, [chartData, duration]);
 
   return (
-    <ResponsiveContainer width="100%" height={220}>
+    <ResponsiveContainer width="100%" height={200}>
       <ComposedChart data={data} margin={{ top: 8, right: 12, left: 4, bottom: 16 }}>
         <defs>
           <linearGradient id="colorEngagement" x1="0" y1="0" x2="0" y2="1">
@@ -79,7 +79,7 @@ const SessionLineChart: React.FC<SessionLineChartProps> = ({
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
-          minTickGap={40}
+          minTickGap={30}
           tickMargin={6}
           height={28}
         />
@@ -90,7 +90,7 @@ const SessionLineChart: React.FC<SessionLineChartProps> = ({
           domain={[0, 100]}
           ticks={[0, 25, 50, 75, 100]}
           tickMargin={6}
-          width={42}
+          width={36}
           allowDecimals={false}
         />
         <Tooltip content={<CustomTooltip />} />

@@ -155,7 +155,7 @@ const GuidanceTab: React.FC<GuidanceTabProps> = ({ currentGuidance, onActionClic
       </Paper>
 
       {/* Action Cards */}
-      <Box sx={{ display: 'flex', gap: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
         {/* Immediate Actions */}
         <Box sx={{ flex: 1 }}>
           <Typography variant="body2" sx={{
@@ -168,9 +168,9 @@ const GuidanceTab: React.FC<GuidanceTabProps> = ({ currentGuidance, onActionClic
           }}>
             Immediate Actions
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
             {currentGuidance.immediateActions.map((action, index) => (
-              <Box key={index} sx={{ flex: 1 }}>
+              <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: 1 } }}>
                 <ActionCard action={action} />
               </Box>
             ))}
@@ -189,9 +189,9 @@ const GuidanceTab: React.FC<GuidanceTabProps> = ({ currentGuidance, onActionClic
           }}>
             Contraindications
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
             {currentGuidance.contraindications.map((action, index) => (
-              <Box key={index} sx={{ flex: 1 }}>
+              <Box key={index} sx={{ flex: { xs: '1 1 100%', sm: 1 } }}>
                 <ActionCard action={action} isContraindication />
               </Box>
             ))}

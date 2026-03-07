@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { SvgIconComponent } from '@mui/icons-material';
 
 interface EmptyStateProps {
   icon: React.ReactElement;
@@ -11,18 +10,28 @@ interface EmptyStateProps {
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({ icon, title, description, actionLabel, onAction }) => (
-  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 6, px: 3, textAlign: 'center' }}>
-    <Box sx={{ mb: 2, color: '#c4c7c5', '& .MuiSvgIcon-root': { fontSize: 48 } }}>
+  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8, px: 3, textAlign: 'center' }}>
+    <Box sx={{ mb: 3, color: 'text.secondary', '& .MuiSvgIcon-root': { fontSize: 64 } }}>
       {icon}
     </Box>
-    <Typography variant="h6" sx={{ fontWeight: 500, color: '#3c4043', mb: 0.5 }}>
+    <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
       {title}
     </Typography>
-    <Typography variant="body2" sx={{ color: '#5f6368', maxWidth: 320, mb: actionLabel ? 3 : 0 }}>
+    <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 400, mb: actionLabel ? 3 : 0 }}>
       {description}
     </Typography>
     {actionLabel && onAction && (
-      <Button variant="outlined" onClick={onAction} sx={{ borderRadius: 2 }}>
+      <Button
+        variant="contained"
+        onClick={onAction}
+        sx={{
+          borderRadius: 2,
+          background: 'linear-gradient(135deg, #0b57d0 0%, #00639b 100%)',
+          fontWeight: 600,
+          py: 1,
+          px: 3,
+        }}
+      >
         {actionLabel}
       </Button>
     )}

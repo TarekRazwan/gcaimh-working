@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Typography, Chip, Paper, Skeleton, Alert,
-  Table, TableBody, TableCell, TableHead, TableRow,
+  Box, Typography, Chip, Card, CardContent, Skeleton, Alert, Stack,
 } from '@mui/material';
 import { Warning } from '@mui/icons-material';
 import { useTherapistBridge } from '../../../../contexts/TherapistClientBridgeContext';
@@ -35,41 +34,48 @@ function TrendSection({ measureId, shortName, rows }: { measureId: string; short
   const delta = latest && first ? latest.score - first.score : 0;
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-        <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: color, flexShrink: 0 }} />
-        <Typography sx={{ fontWeight: 600, fontSize: '14px', color: '#1f1f1f' }}>{shortName}</Typography>
-        {latest && (
-          <Chip
-            label={latest.severity}
-            size="small"
-            color={CHIP_COLOR[latest.severityColor]}
-            sx={{ height: 20, fontSize: '11px' }}
-          />
-        )}
-        {delta !== 0 && (
-          <Typography variant="caption" sx={{ color: delta < 0 ? '#128937' : '#b3261e', fontWeight: 600 }}>
-            {delta < 0 ? `↓ ${Math.abs(delta)} since start` : `↑ ${delta} since start`}
-          </Typography>
-        )}
-      </Box>
-      {/* Score sparkline as simple row of badges */}
-      <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', pl: 2.5 }}>
-        {rows.map((r, i) => (
-          <Box key={i} sx={{ textAlign: 'center' }}>
-            <Box sx={{
-              width: 36, height: 36, borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              bgcolor: i === rows.length - 1 ? color : `${color}22`,
-              color: i === rows.length - 1 ? 'white' : color,
-              fontSize: '13px', fontWeight: 700,
-            }}>
-              {r.score}
+    <Card
+      sx={{
+        borderLeft: 4,
+        borderColor: color,
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': { transform: 'translateY(-2px)', boxShadow: 3 },
+      }}
+    >
+      <CardContent>
+        <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" mb={2}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>{shortName}</Typography>
+          {latest && (
+            <Chip
+              label={latest.severity}
+              size="small"
+              color={CHIP_COLOR[latest.severityColor]}
+            />
+          )}
+          {delta !== 0 && (
+            <Typography variant="body2" sx={{ color: delta < 0 ? '#128937' : '#b3261e', fontWeight: 600 }}>
+              {delta < 0 ? `↓ ${Math.abs(delta)} since start` : `↑ ${delta} since start`}
+            </Typography>
+          )}
+        </Stack>
+        {/* Score sparkline as simple row of badges */}
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          {rows.map((r, i) => (
+            <Box key={i} sx={{ textAlign: 'center' }}>
+              <Box sx={{
+                width: 44, height: 44, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                bgcolor: i === rows.length - 1 ? color : `${color}18`,
+                color: i === rows.length - 1 ? 'white' : color,
+                fontSize: '14px', fontWeight: 700,
+              }}>
+                {r.score}
+              </Box>
+              <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>{formatWeek(r.weekOf)}</Typography>
             </Box>
-            <Typography sx={{ fontSize: '10px', color: '#5f6368', mt: 0.25 }}>{formatWeek(r.weekOf)}</Typography>
-          </Box>
-        ))}
-      </Box>
-    </Box>
+          ))}
+        </Box>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -119,49 +125,51 @@ const OutcomesPanel: React.FC<OutcomesPanelProps> = ({ clientId }) => {
       )}
 
       {/* Schedule */}
-      <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-        <Typography sx={{ fontWeight: 600, fontSize: '14px', color: '#1f1f1f', mb: 1.5 }}>Check-in Schedule</Typography>
-        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          <Box>
-            <Typography variant="caption" color="text.secondary">Cadence</Typography>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>Weekly</Typography>
-          </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">Last completed</Typography>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {overview.lastCompletedWeek ? formatWeek(overview.lastCompletedWeek) : '—'}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">Next due</Typography>
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>{formatWeek(overview.nextDueWeek)}</Typography>
-          </Box>
-          <Box>
-            <Typography variant="caption" color="text.secondary">Measures</Typography>
-            <Box sx={{ display: 'flex', gap: 0.5, mt: 0.25 }}>
-              {measureIds.map(id => (
-                <Chip key={id} label={grouped[id][0]?.measureShortName ?? id} size="small" variant="outlined" sx={{ height: 20, fontSize: '11px' }} />
-              ))}
+      <Card>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>Check-in Schedule</Typography>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} flexWrap="wrap">
+            <Box>
+              <Typography variant="body2" color="text.secondary">Cadence</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>Weekly</Typography>
             </Box>
-          </Box>
-        </Box>
-      </Paper>
+            <Box>
+              <Typography variant="body2" color="text.secondary">Last completed</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                {overview.lastCompletedWeek ? formatWeek(overview.lastCompletedWeek) : '—'}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary">Next due</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>{formatWeek(overview.nextDueWeek)}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary">Measures</Typography>
+              <Stack direction="row" spacing={0.5} mt={0.5}>
+                {measureIds.map(id => (
+                  <Chip key={id} label={grouped[id][0]?.measureShortName ?? id} size="small" variant="outlined" />
+                ))}
+              </Stack>
+            </Box>
+          </Stack>
+        </CardContent>
+      </Card>
 
       {/* Trends */}
       {!hasTrend ? (
         <EmptyState icon={<Assessment />} title="No check-in data yet" description="Outcome scores will appear here once the client completes their first weekly check-in." />
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Typography sx={{ fontWeight: 600, fontSize: '14px', color: '#1f1f1f' }}>
+        <Stack spacing={2}>
+          <Typography variant="h5" sx={{ fontWeight: 600 }}>
             7-Week Trend
-            <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+            <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
               (highlighted = most recent)
             </Typography>
           </Typography>
           {measureIds.map(id => (
             <TrendSection key={id} measureId={id} shortName={grouped[id][0]?.measureShortName ?? id} rows={grouped[id]} />
           ))}
-        </Box>
+        </Stack>
       )}
     </Box>
   );

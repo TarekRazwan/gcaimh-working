@@ -219,7 +219,7 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
       }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Assignment sx={{ fontSize: 28 }} />
-          <Typography variant="h5" fontWeight={600} sx={{ fontSize: '1.75rem' }}>
+          <Typography variant="h5" fontWeight={600} sx={{ fontSize: { xs: '1.1rem', sm: '1.75rem' } }}>
             Session Summary
           </Typography>
           {sessionId && (
@@ -359,7 +359,7 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '1.35rem' }}>
                 <TrendingUp /> Session Overview
               </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 2, mt: 2 }}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2, mt: 2 }}>
                 <Box>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.85rem' }}>Duration</Typography>
                   <Typography variant="body1" fontWeight={600} sx={{ fontSize: '1.1rem' }}>
@@ -420,7 +420,7 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
             <Divider />
 
             {/* Progress & Areas for Consideration */}
-            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
               <Box>
                 <Typography variant="h6" gutterBottom sx={{ fontSize: '1.35rem' }}>
                   Progress Indicators
@@ -572,7 +572,7 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
                       Session saved successfully for patient "{patientName}".
                     </Alert>
                   ) : (
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mt: 1 }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'flex-start' }, gap: 2, mt: 1 }}>
                       <TextField
                         label="Patient Name or ID"
                         value={patientName}
@@ -583,7 +583,7 @@ const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
                         disabled={saveSessionLoading}
                         error={!!saveError}
                         helperText={saveError}
-                        sx={{ maxWidth: 360 }}
+                        sx={{ maxWidth: { xs: '100%', sm: 360 } }}
                       />
                       <Button
                         variant="contained"

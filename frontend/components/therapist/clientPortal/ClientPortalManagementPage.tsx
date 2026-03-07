@@ -12,10 +12,10 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Paper, Typography, Fab, Tabs, Tab, Chip, Drawer,
+  Box, Card, CardContent, Typography, Tabs, Tab, Chip, Drawer,
   TextField, Select, MenuItem as MuiMenuItem, FormControl, InputLabel,
   Button, Alert, Skeleton, Divider, FormHelperText,
-  Autocomplete,
+  Autocomplete, Stack,
 } from '@mui/material';
 import {
   ArrowBack, Assignment, Assessment, Publish, LibraryBooks, History, Add,
@@ -90,9 +90,9 @@ function AssignHomeworkDrawer({ open, onClose, clientId, preselectedModuleId, on
   };
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose} PaperProps={{ sx: { width: 420, p: 3 } }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>Assign Homework</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+    <Drawer anchor="right" open={open} onClose={onClose} PaperProps={{ sx: { width: { xs: '100%', sm: 480 }, p: { xs: 2, md: 3 } } }}>
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>Assign Homework</Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Select a psychoeducation module for the client to review between sessions.
       </Typography>
 
@@ -212,9 +212,9 @@ function AssignInterventionDrawer({ open, onClose, clientId, preselectedInterven
   };
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose} PaperProps={{ sx: { width: 420, p: 3 } }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>Assign Tool / Intervention</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+    <Drawer anchor="right" open={open} onClose={onClose} PaperProps={{ sx: { width: { xs: '100%', sm: 480 }, p: { xs: 2, md: 3 } } }}>
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>Assign Tool / Intervention</Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Select a therapeutic tool for the client to practice between sessions.
       </Typography>
 
@@ -342,31 +342,26 @@ function PageInner({ clientId, clientName, onNavigateBack }: PageInnerProps) {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--background-gradient)' }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 3, gap: 2.5, maxWidth: 900, mx: 'auto', width: '100%' }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: { xs: 2, md: 3 }, gap: 3, maxWidth: 1200, mx: 'auto', width: '100%' }}>
 
         {/* Header */}
-        <Paper elevation={2} sx={{ borderRadius: 2, p: 2.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Fab
-              size="medium"
-              color="primary"
-              onClick={onNavigateBack}
-              sx={{
-                background: 'linear-gradient(135deg, #0b57d0 0%, #00639b 100%)',
-                boxShadow: '0 8px 20px -4px rgba(11, 87, 208, 0.35)',
-                flexShrink: 0,
-              }}
-            >
-              <ArrowBack />
-            </Fab>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              {loadingClient ? (
-                <Skeleton variant="text" width={200} height={32} />
-              ) : (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
-                  <Typography variant="h5" sx={{ fontWeight: 600, color: '#1f1f1f' }}>
-                    {client?.name ?? clientName ?? 'Client'}
-                  </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, flexWrap: 'wrap' }}>
+          <Button
+            startIcon={<ArrowBack />}
+            onClick={onNavigateBack}
+            sx={{ color: '#0b57d0', textTransform: 'none', fontWeight: 500 }}
+          >
+            Back
+          </Button>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            {loadingClient ? (
+              <Skeleton variant="text" width={200} height={40} />
+            ) : (
+              <>
+                <Typography variant="h4" sx={{ fontWeight: 600, mb: 0.5 }}>
+                  {client?.name ?? clientName ?? 'Client'}
+                </Typography>
+                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" gap={1}>
                   {client?.status && (
                     <Chip
                       label={client.status.charAt(0).toUpperCase() + client.status.slice(1)}
@@ -375,48 +370,57 @@ function PageInner({ clientId, clientName, onNavigateBack }: PageInnerProps) {
                     />
                   )}
                   {client?.primaryConcern && (
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '13px' }}>
+                    <Typography variant="body1" color="text.secondary">
                       {client.primaryConcern}
                     </Typography>
                   )}
-                </Box>
-              )}
-              <Typography variant="caption" color="text.secondary">Between-session plan management</Typography>
-            </Box>
-            <Button
-              variant="outlined"
-              startIcon={<Add />}
-              onClick={() => openAssignHomework()}
-              size="small"
-              sx={{ borderRadius: 2, whiteSpace: 'nowrap', flexShrink: 0 }}
-            >
-              Assign homework
-            </Button>
+                  <Typography variant="body2" color="text.secondary">
+                    Between-session plan management
+                  </Typography>
+                </Stack>
+              </>
+            )}
           </Box>
-        </Paper>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => openAssignHomework()}
+            sx={{
+              borderRadius: 2,
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+              background: 'linear-gradient(135deg, #0b57d0 0%, #00639b 100%)',
+              py: 1.25,
+              px: 3,
+              fontWeight: 600,
+            }}
+          >
+            Assign homework
+          </Button>
+        </Box>
 
         {/* Tab bar */}
-        <Paper elevation={1} sx={{ borderRadius: 2 }}>
+        <Card sx={{ borderRadius: 3, overflow: 'visible' }}>
           <Tabs
             value={tab}
             onChange={(_, v) => setTab(v)}
             variant="scrollable"
             scrollButtons="auto"
             sx={{
-              px: 1,
-              '& .MuiTab-root': { minHeight: 48, fontSize: '13px', textTransform: 'none', fontWeight: 500 },
+              px: 2,
+              '& .MuiTab-root': { minHeight: 56, fontSize: '14px', textTransform: 'none', fontWeight: 500 },
               '& .Mui-selected': { color: '#0b57d0', fontWeight: 700 },
-              '& .MuiTabs-indicator': { backgroundColor: '#0b57d0' },
+              '& .MuiTabs-indicator': { backgroundColor: '#0b57d0', height: 3, borderRadius: '3px 3px 0 0' },
             }}
           >
             {TABS.map(t => (
-              <Tab key={t.label} label={t.label} icon={t.icon} iconPosition="start" sx={{ gap: 0.75 }} />
+              <Tab key={t.label} label={t.label} icon={t.icon} iconPosition="start" sx={{ gap: 1 }} />
             ))}
           </Tabs>
-        </Paper>
+        </Card>
 
         {/* Panel area */}
-        <Paper elevation={1} sx={{ borderRadius: 2, p: 3, flex: 1 }}>
+        <Card sx={{ borderRadius: 3, p: { xs: 2, md: 3 }, flex: 1 }}>
           {tab === 0 && (
             <PlanPanel
               clientId={clientId}
@@ -435,7 +439,7 @@ function PageInner({ clientId, clientName, onNavigateBack }: PageInnerProps) {
             />
           )}
           {tab === 4 && <ActivityPanel clientId={clientId} refreshKey={activityRefreshKey} />}
-        </Paper>
+        </Card>
       </Box>
 
       {/* Assign homework drawer */}

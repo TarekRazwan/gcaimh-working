@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box, Typography, Button, Chip, Paper, Skeleton, Alert,
-  Divider, Menu, MenuItem, IconButton, Tooltip,
+  Box, Typography, Button, Chip, Card, CardContent, CardActions, Skeleton, Alert,
+  Divider, Menu, MenuItem, IconButton, Tooltip, Stack,
 } from '@mui/material';
 import {
   Add, CheckCircle, Schedule, Archive, MoreVert, FitnessCenter, MenuBook,
@@ -32,52 +32,65 @@ function HomeworkCard({ item, onStatusChange }: { item: TherapistHomeworkItem; o
   const isOverdue = item.dueAt && item.status !== 'COMPLETED' && item.status !== 'ARCHIVED' && new Date(item.dueAt) < new Date();
 
   return (
-    <Paper variant="outlined" sx={{ p: 2, borderRadius: 2, borderColor: isOverdue ? '#f59e0b' : '#e0e0e0' }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.5 }}>
-            <Typography sx={{ fontWeight: 600, fontSize: '14px', color: '#1f1f1f' }}>
-              {item.moduleTitle}
-            </Typography>
-            <Chip label={item.status.replace('_', ' ')} size="small" color={STATUS_COLOR[item.status]} sx={{ height: 20, fontSize: '11px' }} />
-            {isOverdue && <Chip label="Overdue" size="small" color="warning" sx={{ height: 20, fontSize: '11px' }} />}
-          </Box>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <Typography variant="caption" color="text.secondary">{item.moduleCategory} · {item.estimatedMinutes} min</Typography>
-            {item.dueAt && (
-              <Typography variant="caption" color={isOverdue ? 'warning.main' : 'text.secondary'}>
-                Due {formatDate(item.dueAt)}
+    <Card
+      sx={{
+        borderLeft: 4,
+        borderColor: isOverdue ? 'warning.main' : 'primary.main',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': { transform: 'translateY(-2px)', boxShadow: 3 },
+      }}
+    >
+      <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" gap={0.5} mb={1}>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+                {item.moduleTitle}
+              </Typography>
+              <Chip label={item.status.replace('_', ' ')} size="small" color={STATUS_COLOR[item.status]} />
+              {isOverdue && <Chip label="Overdue" size="small" color="warning" />}
+            </Stack>
+            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+              <Stack direction="row" spacing={0.5} alignItems="center">
+                <Schedule fontSize="small" color="action" />
+                <Typography variant="body2" color="text.secondary">{item.estimatedMinutes} min</Typography>
+              </Stack>
+              <Chip label={item.moduleCategory} size="small" variant="outlined" />
+              {item.dueAt && (
+                <Typography variant="body2" color={isOverdue ? 'warning.main' : 'text.secondary'}>
+                  Due {formatDate(item.dueAt)}
+                </Typography>
+              )}
+              {item.progress?.lastOpenedAt && (
+                <Typography variant="body2" color="text.secondary">Last opened {formatDate(item.progress.lastOpenedAt)}</Typography>
+              )}
+            </Stack>
+            {item.note && (
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
+                Note: {item.note}
               </Typography>
             )}
-            {item.progress?.lastOpenedAt && (
-              <Typography variant="caption" color="text.secondary">Last opened {formatDate(item.progress.lastOpenedAt)}</Typography>
-            )}
           </Box>
-          {item.note && (
-            <Typography variant="caption" sx={{ color: '#5f6368', fontStyle: 'italic', mt: 0.5, display: 'block' }}>
-              Note: {item.note}
-            </Typography>
-          )}
-        </Box>
-        {item.status !== 'ARCHIVED' && (
-          <>
-            <IconButton size="small" onClick={e => setAnchorEl(e.currentTarget)}>
-              <MoreVert fontSize="small" />
-            </IconButton>
-            <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
-              {item.status !== 'COMPLETED' && (
-                <MenuItem onClick={() => { onStatusChange(item.id, 'COMPLETED'); setAnchorEl(null); }}>
-                  <CheckCircle fontSize="small" sx={{ mr: 1, color: '#128937' }} /> Mark complete
+          {item.status !== 'ARCHIVED' && (
+            <>
+              <IconButton size="small" onClick={e => setAnchorEl(e.currentTarget)}>
+                <MoreVert />
+              </IconButton>
+              <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
+                {item.status !== 'COMPLETED' && (
+                  <MenuItem onClick={() => { onStatusChange(item.id, 'COMPLETED'); setAnchorEl(null); }}>
+                    <CheckCircle fontSize="small" sx={{ mr: 1, color: '#128937' }} /> Mark complete
+                  </MenuItem>
+                )}
+                <MenuItem onClick={() => { onStatusChange(item.id, 'ARCHIVED'); setAnchorEl(null); }}>
+                  <Archive fontSize="small" sx={{ mr: 1 }} /> Archive
                 </MenuItem>
-              )}
-              <MenuItem onClick={() => { onStatusChange(item.id, 'ARCHIVED'); setAnchorEl(null); }}>
-                <Archive fontSize="small" sx={{ mr: 1 }} /> Archive
-              </MenuItem>
-            </Menu>
-          </>
-        )}
-      </Box>
-    </Paper>
+              </Menu>
+            </>
+          )}
+        </Stack>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -85,35 +98,44 @@ function InterventionCard({ item, onArchive }: { item: TherapistInterventionAssi
   const formatDate = (iso: string) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
   return (
-    <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.5 }}>
-            <Typography sx={{ fontWeight: 600, fontSize: '14px', color: '#1f1f1f' }}>{item.interventionTitle}</Typography>
-            <Chip label={item.interventionType.replace('_', ' ')} size="small" variant="outlined" sx={{ height: 20, fontSize: '11px' }} />
-            {item.frequency && <Chip label={FREQ_LABEL[item.frequency]} size="small" sx={{ height: 20, fontSize: '11px', bgcolor: '#e8f0fe', color: '#0b57d0' }} />}
-          </Box>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-            <Typography variant="caption" color="text.secondary">Assigned {formatDate(item.assignedAt)}</Typography>
-            {item.recentUsageCount !== undefined && (
-              <Typography variant="caption" color="text.secondary">{item.recentUsageCount}× used (last 7 days)</Typography>
+    <Card
+      sx={{
+        borderLeft: 4,
+        borderColor: 'success.main',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': { transform: 'translateY(-2px)', boxShadow: 3 },
+      }}
+    >
+      <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" gap={0.5} mb={1}>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>{item.interventionTitle}</Typography>
+              <Chip label={item.interventionType.replace('_', ' ')} size="small" variant="outlined" />
+              {item.frequency && <Chip label={FREQ_LABEL[item.frequency]} size="small" color="primary" />}
+            </Stack>
+            <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+              <Typography variant="body2" color="text.secondary">Assigned {formatDate(item.assignedAt)}</Typography>
+              {item.recentUsageCount !== undefined && (
+                <Typography variant="body2" color="text.secondary">{item.recentUsageCount}× used (last 7 days)</Typography>
+              )}
+            </Stack>
+            {item.note && (
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
+                Note: {item.note}
+              </Typography>
             )}
           </Box>
-          {item.note && (
-            <Typography variant="caption" sx={{ color: '#5f6368', fontStyle: 'italic', mt: 0.5, display: 'block' }}>
-              Note: {item.note}
-            </Typography>
+          {item.status === 'ACTIVE' && (
+            <Tooltip title="Archive">
+              <IconButton onClick={() => onArchive(item.id)}>
+                <Archive />
+              </IconButton>
+            </Tooltip>
           )}
-        </Box>
-        {item.status === 'ACTIVE' && (
-          <Tooltip title="Archive">
-            <IconButton size="small" onClick={() => onArchive(item.id)}>
-              <Archive fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        )}
-      </Box>
-    </Paper>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -159,19 +181,22 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ clientId, onAssignHomework, onAss
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Homework */}
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '16px', color: '#1f1f1f' }}>
-              Homework Modules
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '13px' }}>
-              Psychoeducation modules assigned between sessions.
-            </Typography>
-          </Box>
-          <Button size="small" variant="outlined" startIcon={<Add />} onClick={onAssignHomework} sx={{ borderRadius: 2, whiteSpace: 'nowrap' }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <MenuBook color="primary" />
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                Homework Modules
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Psychoeducation modules assigned between sessions
+              </Typography>
+            </Box>
+          </Stack>
+          <Button variant="contained" startIcon={<Add />} onClick={onAssignHomework} sx={{ borderRadius: 2, whiteSpace: 'nowrap' }}>
             Assign homework
           </Button>
-        </Box>
+        </Stack>
         {activeHomework.length === 0 ? (
           <EmptyState
             icon={<MenuBook />}
@@ -181,11 +206,11 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ clientId, onAssignHomework, onAss
             onAction={onAssignHomework}
           />
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Stack spacing={2}>
             {activeHomework.map(h => (
               <HomeworkCard key={h.id} item={h} onStatusChange={handleStatusChange} />
             ))}
-          </Box>
+          </Stack>
         )}
       </Box>
 
@@ -193,19 +218,22 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ clientId, onAssignHomework, onAss
 
       {/* Interventions */}
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '16px', color: '#1f1f1f' }}>
-              Tools & Interventions
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '13px' }}>
-              Therapeutic tools assigned for between-session practice.
-            </Typography>
-          </Box>
-          <Button size="small" variant="outlined" startIcon={<Add />} onClick={onAssignIntervention} sx={{ borderRadius: 2, whiteSpace: 'nowrap' }}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <FitnessCenter color="success" />
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 600 }}>
+                Tools & Interventions
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Therapeutic tools assigned for between-session practice
+              </Typography>
+            </Box>
+          </Stack>
+          <Button variant="contained" startIcon={<Add />} onClick={onAssignIntervention} sx={{ borderRadius: 2, whiteSpace: 'nowrap' }}>
             Assign tool
           </Button>
-        </Box>
+        </Stack>
         {activeInterventions.length === 0 ? (
           <EmptyState
             icon={<FitnessCenter />}
@@ -215,11 +243,11 @@ const PlanPanel: React.FC<PlanPanelProps> = ({ clientId, onAssignHomework, onAss
             onAction={onAssignIntervention}
           />
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Stack spacing={2}>
             {activeInterventions.map(i => (
               <InterventionCard key={i.id} item={i} onArchive={handleArchiveIntervention} />
             ))}
-          </Box>
+          </Stack>
         )}
       </Box>
     </Box>
