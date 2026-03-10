@@ -22,6 +22,11 @@ import {
   ActivityEventType,
   ModuleForAssignment,
   InterventionForAssignment,
+  QuestionnaireDefinition,
+  QuestionnaireAssignment,
+  QuestionnaireResponse,
+  QuestionnaireCadence,
+  QuestionnaireStatus,
 } from '../types/therapistClientBridge';
 
 // ---------------------------------------------------------------------------
@@ -35,6 +40,8 @@ interface BridgeStorage {
   interventions: Record<string, TherapistInterventionAssignment[]>;
   publishDrafts: Record<string, PublishDraft>;
   activityLog: ActivityEvent[];
+  questionnaireAssignments: Record<string, QuestionnaireAssignment[]>;
+  questionnaireResponses: QuestionnaireResponse[];
 }
 
 // ---------------------------------------------------------------------------
@@ -216,6 +223,183 @@ const SEED_OUTCOMES: Record<string, SeedOutcomeRow[]> = {
 };
 
 // ---------------------------------------------------------------------------
+// Seed: Questionnaire definitions
+// ---------------------------------------------------------------------------
+
+const SEED_QUESTIONNAIRE_DEFS: QuestionnaireDefinition[] = [
+  {
+    id: 'q-phq9', name: 'Patient Health Questionnaire-9', shortName: 'PHQ-9',
+    description: 'Screens for depression severity over the past 2 weeks. 9 items scored 0-3.',
+    itemCount: 9, maxScore: 27, estimatedMinutes: 3, category: 'DEPRESSION',
+    thresholds: [
+      { label: 'Minimal', min: 0, max: 4, color: 'success' },
+      { label: 'Mild', min: 5, max: 9, color: 'info' },
+      { label: 'Moderate', min: 10, max: 14, color: 'warning' },
+      { label: 'Moderately Severe', min: 15, max: 19, color: 'error' },
+      { label: 'Severe', min: 20, max: 27, color: 'error' },
+    ],
+  },
+  {
+    id: 'q-gad7', name: 'Generalized Anxiety Disorder-7', shortName: 'GAD-7',
+    description: 'Measures generalized anxiety severity over the past 2 weeks. 7 items scored 0-3.',
+    itemCount: 7, maxScore: 21, estimatedMinutes: 2, category: 'ANXIETY',
+    thresholds: [
+      { label: 'Minimal', min: 0, max: 4, color: 'success' },
+      { label: 'Mild', min: 5, max: 9, color: 'info' },
+      { label: 'Moderate', min: 10, max: 14, color: 'warning' },
+      { label: 'Severe', min: 15, max: 21, color: 'error' },
+    ],
+  },
+  {
+    id: 'q-pcl5', name: 'PTSD Checklist for DSM-5', shortName: 'PCL-5',
+    description: 'Assesses PTSD symptom severity over the past month. 20 items scored 0-4.',
+    itemCount: 20, maxScore: 80, estimatedMinutes: 8, category: 'TRAUMA',
+    thresholds: [
+      { label: 'Below threshold', min: 0, max: 30, color: 'success' },
+      { label: 'Probable PTSD', min: 31, max: 50, color: 'warning' },
+      { label: 'Severe', min: 51, max: 80, color: 'error' },
+    ],
+  },
+  {
+    id: 'q-dass21', name: 'Depression Anxiety Stress Scales-21', shortName: 'DASS-21',
+    description: 'Measures depression, anxiety, and stress. 21 items across three 7-item subscales.',
+    itemCount: 21, maxScore: 63, estimatedMinutes: 5, category: 'GENERAL',
+    thresholds: [
+      { label: 'Normal', min: 0, max: 14, color: 'success' },
+      { label: 'Mild', min: 15, max: 25, color: 'info' },
+      { label: 'Moderate', min: 26, max: 38, color: 'warning' },
+      { label: 'Severe', min: 39, max: 63, color: 'error' },
+    ],
+  },
+  {
+    id: 'q-audit', name: 'Alcohol Use Disorders Identification Test', shortName: 'AUDIT',
+    description: 'Screens for hazardous alcohol consumption. 10 items.',
+    itemCount: 10, maxScore: 40, estimatedMinutes: 3, category: 'SUBSTANCE',
+    thresholds: [
+      { label: 'Low risk', min: 0, max: 7, color: 'success' },
+      { label: 'Hazardous', min: 8, max: 15, color: 'info' },
+      { label: 'Harmful', min: 16, max: 19, color: 'warning' },
+      { label: 'Possible dependence', min: 20, max: 40, color: 'error' },
+    ],
+  },
+  {
+    id: 'q-wsas', name: 'Work and Social Adjustment Scale', shortName: 'WSAS',
+    description: 'Measures functional impairment across work, social, and leisure domains. 5 items scored 0-8.',
+    itemCount: 5, maxScore: 40, estimatedMinutes: 2, category: 'FUNCTIONAL',
+    thresholds: [
+      { label: 'Low impairment', min: 0, max: 9, color: 'success' },
+      { label: 'Moderate', min: 10, max: 19, color: 'info' },
+      { label: 'Significant', min: 20, max: 29, color: 'warning' },
+      { label: 'Severe', min: 30, max: 40, color: 'error' },
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Seed: Questionnaire assignments per client
+// ---------------------------------------------------------------------------
+
+const SEED_Q_ASSIGNMENTS: Record<string, QuestionnaireAssignment[]> = {
+  '1': [ // Sarah — anxiety focus
+    { id: 'qa-1-1', clientId: '1', questionnaireId: 'q-gad7', questionnaireName: 'Generalized Anxiety Disorder-7', questionnaireShortName: 'GAD-7', cadence: 'WEEKLY', status: 'ACTIVE', assignedAt: '2026-01-05T10:00:00Z', completionCount: 7, lastCompletedAt: '2026-02-16T09:00:00Z', nextDueAt: '2026-02-23T00:00:00Z' },
+    { id: 'qa-1-2', clientId: '1', questionnaireId: 'q-wsas', questionnaireName: 'Work and Social Adjustment Scale', questionnaireShortName: 'WSAS', cadence: 'MONTHLY', status: 'ACTIVE', assignedAt: '2026-01-05T10:00:00Z', completionCount: 2, lastCompletedAt: '2026-02-05T10:00:00Z', nextDueAt: '2026-03-05T00:00:00Z' },
+  ],
+  '2': [ // Michael — PTSD
+    { id: 'qa-2-1', clientId: '2', questionnaireId: 'q-pcl5', questionnaireName: 'PTSD Checklist for DSM-5', questionnaireShortName: 'PCL-5', cadence: 'BIWEEKLY', status: 'ACTIVE', assignedAt: '2026-01-05T10:00:00Z', completionCount: 4, lastCompletedAt: '2026-02-16T10:00:00Z', nextDueAt: '2026-03-02T00:00:00Z' },
+    { id: 'qa-2-2', clientId: '2', questionnaireId: 'q-gad7', questionnaireName: 'Generalized Anxiety Disorder-7', questionnaireShortName: 'GAD-7', cadence: 'WEEKLY', status: 'ACTIVE', assignedAt: '2026-01-05T10:00:00Z', completionCount: 7, lastCompletedAt: '2026-02-16T09:30:00Z', nextDueAt: '2026-02-23T00:00:00Z' },
+  ],
+  '3': [ // Jane — depression
+    { id: 'qa-3-1', clientId: '3', questionnaireId: 'q-phq9', questionnaireName: 'Patient Health Questionnaire-9', questionnaireShortName: 'PHQ-9', cadence: 'WEEKLY', status: 'ACTIVE', assignedAt: '2026-01-05T10:00:00Z', completionCount: 7, lastCompletedAt: '2026-02-16T08:00:00Z', nextDueAt: '2026-02-23T00:00:00Z' },
+    { id: 'qa-3-2', clientId: '3', questionnaireId: 'q-dass21', questionnaireName: 'Depression Anxiety Stress Scales-21', questionnaireShortName: 'DASS-21', cadence: 'MONTHLY', status: 'PAUSED', assignedAt: '2026-01-05T10:00:00Z', pausedAt: '2026-02-01T10:00:00Z', completionCount: 1, lastCompletedAt: '2026-01-12T09:00:00Z', note: 'Paused — focusing on PHQ-9 for now' },
+  ],
+};
+
+// ---------------------------------------------------------------------------
+// Seed: Questionnaire responses (mock completed check-ins)
+// ---------------------------------------------------------------------------
+
+function buildMockResponses(): QuestionnaireResponse[] {
+  const responses: QuestionnaireResponse[] = [];
+
+  // Sarah GAD-7 weekly responses (7 weeks)
+  const sarahGad7Scores = [14, 12, 11, 10, 8, 7, 6];
+  const sarahGad7Weeks = ['2026-01-05', '2026-01-12', '2026-01-19', '2026-01-26', '2026-02-02', '2026-02-09', '2026-02-16'];
+  sarahGad7Weeks.forEach((week, i) => {
+    const score = sarahGad7Scores[i];
+    const sev = getSeverity(score, GAD7_THRESHOLDS);
+    responses.push({
+      id: `qr-1-gad7-${i}`, clientId: '1', assignmentId: 'qa-1-1', questionnaireId: 'q-gad7',
+      questionnaireName: 'GAD-7', weekOf: week, completedAt: `${week}T09:00:00Z`,
+      items: Array.from({ length: 7 }, (_, j) => ({ itemIndex: j, value: Math.round(score / 7) })),
+      totalScore: score, maxScore: 21, severity: sev.label, severityColor: sev.color,
+      flagged: false,
+    });
+  });
+
+  // Sarah WSAS monthly responses (2)
+  [{ week: '2026-01-05', score: 22 }, { week: '2026-02-05', score: 17 }].forEach((r, i) => {
+    const thresholds = SEED_QUESTIONNAIRE_DEFS.find(d => d.id === 'q-wsas')!.thresholds;
+    const sev = thresholds.find(t => r.score >= t.min && r.score <= t.max) ?? thresholds[thresholds.length - 1];
+    responses.push({
+      id: `qr-1-wsas-${i}`, clientId: '1', assignmentId: 'qa-1-2', questionnaireId: 'q-wsas',
+      questionnaireName: 'WSAS', weekOf: r.week, completedAt: `${r.week}T10:00:00Z`,
+      items: Array.from({ length: 5 }, (_, j) => ({ itemIndex: j, value: Math.round(r.score / 5) })),
+      totalScore: r.score, maxScore: 40, severity: sev.label, severityColor: sev.color,
+      flagged: false,
+    });
+  });
+
+  // Jane PHQ-9 weekly responses (7 weeks, with item 9 flag)
+  const janePhq9Scores = [18, 16, 14, 13, 11, 10, 9];
+  const janeItem9Values = [1, 1, 1, 0, 0, 0, 0];
+  const janeWeeks = ['2026-01-05', '2026-01-12', '2026-01-19', '2026-01-26', '2026-02-02', '2026-02-09', '2026-02-16'];
+  janeWeeks.forEach((week, i) => {
+    const score = janePhq9Scores[i];
+    const sev = getSeverity(score, PHQ9_THRESHOLDS);
+    const item9 = janeItem9Values[i];
+    responses.push({
+      id: `qr-3-phq9-${i}`, clientId: '3', assignmentId: 'qa-3-1', questionnaireId: 'q-phq9',
+      questionnaireName: 'PHQ-9', weekOf: week, completedAt: `${week}T08:00:00Z`,
+      items: Array.from({ length: 9 }, (_, j) => ({ itemIndex: j, value: j === 8 ? item9 : Math.round((score - item9) / 8) })),
+      totalScore: score, maxScore: 27, severity: sev.label, severityColor: sev.color,
+      flagged: item9 > 0, flagReason: item9 > 0 ? 'PHQ-9 item 9 (thoughts of self-harm) endorsed' : undefined,
+    });
+  });
+
+  // Michael PCL-5 biweekly (4 responses)
+  const michaelPcl5Scores = [52, 44, 38, 33];
+  const michaelPclWeeks = ['2026-01-05', '2026-01-19', '2026-02-02', '2026-02-16'];
+  const pclThresholds = SEED_QUESTIONNAIRE_DEFS.find(d => d.id === 'q-pcl5')!.thresholds;
+  michaelPclWeeks.forEach((week, i) => {
+    const score = michaelPcl5Scores[i];
+    const sev = pclThresholds.find(t => score >= t.min && score <= t.max) ?? pclThresholds[pclThresholds.length - 1];
+    responses.push({
+      id: `qr-2-pcl5-${i}`, clientId: '2', assignmentId: 'qa-2-1', questionnaireId: 'q-pcl5',
+      questionnaireName: 'PCL-5', weekOf: week, completedAt: `${week}T10:00:00Z`,
+      items: Array.from({ length: 20 }, (_, j) => ({ itemIndex: j, value: Math.round(score / 20) })),
+      totalScore: score, maxScore: 80, severity: sev.label, severityColor: sev.color,
+      flagged: false,
+    });
+  });
+
+  // Michael GAD-7 weekly (7 responses)
+  const michaelGad7Scores = [16, 14, 13, 12, 10, 9, 8];
+  sarahGad7Weeks.forEach((week, i) => {
+    const score = michaelGad7Scores[i];
+    const sev = getSeverity(score, GAD7_THRESHOLDS);
+    responses.push({
+      id: `qr-2-gad7-${i}`, clientId: '2', assignmentId: 'qa-2-2', questionnaireId: 'q-gad7',
+      questionnaireName: 'GAD-7', weekOf: week, completedAt: `${week}T09:30:00Z`,
+      items: Array.from({ length: 7 }, (_, j) => ({ itemIndex: j, value: Math.round(score / 7) })),
+      totalScore: score, maxScore: 21, severity: sev.label, severityColor: sev.color,
+      flagged: false,
+    });
+  });
+
+  return responses;
+}
+
+// ---------------------------------------------------------------------------
 // Seed: Activity log
 // ---------------------------------------------------------------------------
 
@@ -317,6 +501,8 @@ function loadStorage(): BridgeStorage {
     interventions: { ...SEED_INTERVENTIONS_ASSIGNED },
     publishDrafts: { ...SEED_PUBLISH_DRAFTS },
     activityLog: [...SEED_ACTIVITY],
+    questionnaireAssignments: { ...SEED_Q_ASSIGNMENTS },
+    questionnaireResponses: buildMockResponses(),
   };
 }
 
@@ -554,5 +740,90 @@ export class TherapistClientBridgeMockProvider implements TherapistClientBridgeP
 
   async listInterventionsForAssignment(): Promise<InterventionForAssignment[]> {
     return [...SEED_INTERVENTIONS];
+  }
+
+  // --- Questionnaires --------------------------------------------------------
+
+  async listQuestionnaireDefinitions(): Promise<QuestionnaireDefinition[]> {
+    return [...SEED_QUESTIONNAIRE_DEFS];
+  }
+
+  async listClientQuestionnaires(clientId: string): Promise<QuestionnaireAssignment[]> {
+    return this.store.questionnaireAssignments[clientId] ?? [];
+  }
+
+  async assignQuestionnaire(
+    clientId: string,
+    payload: { questionnaireId: string; cadence: QuestionnaireCadence; note?: string }
+  ): Promise<QuestionnaireAssignment> {
+    const def = SEED_QUESTIONNAIRE_DEFS.find(d => d.id === payload.questionnaireId);
+    if (!def) throw new Error(`Questionnaire ${payload.questionnaireId} not found`);
+
+    const item: QuestionnaireAssignment = {
+      id: `qa-${uid()}`,
+      clientId,
+      questionnaireId: payload.questionnaireId,
+      questionnaireName: def.name,
+      questionnaireShortName: def.shortName,
+      cadence: payload.cadence,
+      status: 'ACTIVE',
+      assignedAt: new Date().toISOString(),
+      note: payload.note,
+      completionCount: 0,
+    };
+    const list = this.store.questionnaireAssignments[clientId] ?? [];
+    this.store.questionnaireAssignments[clientId] = [...list, item];
+    this.save();
+
+    await this.addActivityEvent({
+      clientId,
+      type: 'QUESTIONNAIRE_ASSIGNED',
+      description: `Assigned ${def.shortName} questionnaire (${payload.cadence.toLowerCase()})`,
+      timestamp: new Date().toISOString(),
+      actor: 'therapist',
+    });
+
+    return item;
+  }
+
+  async updateQuestionnaireStatus(
+    clientId: string,
+    assignmentId: string,
+    status: QuestionnaireStatus
+  ): Promise<void> {
+    const list = this.store.questionnaireAssignments[clientId] ?? [];
+    const idx = list.findIndex(q => q.id === assignmentId);
+    if (idx === -1) return;
+
+    const item = list[idx];
+    const updated = { ...item, status };
+    if (status === 'PAUSED') updated.pausedAt = new Date().toISOString();
+    if (status === 'REMOVED') updated.removedAt = new Date().toISOString();
+    list[idx] = updated;
+    this.store.questionnaireAssignments[clientId] = list;
+    this.save();
+
+    const typeMap: Record<QuestionnaireStatus, 'QUESTIONNAIRE_ASSIGNED' | 'QUESTIONNAIRE_PAUSED' | 'QUESTIONNAIRE_REMOVED'> = {
+      ACTIVE: 'QUESTIONNAIRE_ASSIGNED',
+      PAUSED: 'QUESTIONNAIRE_PAUSED',
+      REMOVED: 'QUESTIONNAIRE_REMOVED',
+    };
+
+    await this.addActivityEvent({
+      clientId,
+      type: typeMap[status],
+      description: `${item.questionnaireShortName} questionnaire ${status.toLowerCase()}`,
+      timestamp: new Date().toISOString(),
+      actor: 'therapist',
+    });
+  }
+
+  async listQuestionnaireResponses(
+    clientId: string,
+    assignmentId: string
+  ): Promise<QuestionnaireResponse[]> {
+    return (this.store.questionnaireResponses ?? [])
+      .filter(r => r.clientId === clientId && r.assignmentId === assignmentId)
+      .sort((a, b) => b.completedAt.localeCompare(a.completedAt));
   }
 }

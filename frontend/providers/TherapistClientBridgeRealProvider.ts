@@ -16,6 +16,11 @@ import {
   ActivityEvent,
   ModuleForAssignment,
   InterventionForAssignment,
+  QuestionnaireDefinition,
+  QuestionnaireAssignment,
+  QuestionnaireResponse,
+  QuestionnaireCadence,
+  QuestionnaireStatus,
 } from '../types/therapistClientBridge';
 
 class NotImplementedError extends Error {
@@ -42,4 +47,9 @@ export class TherapistClientBridgeRealProvider implements TherapistClientBridgeP
   async addActivityEvent(_event: Omit<ActivityEvent, 'id'>): Promise<ActivityEvent> { throw new NotImplementedError('addActivityEvent'); }
   async listModulesForAssignment(): Promise<ModuleForAssignment[]> { throw new NotImplementedError('listModulesForAssignment'); }
   async listInterventionsForAssignment(): Promise<InterventionForAssignment[]> { throw new NotImplementedError('listInterventionsForAssignment'); }
+  async listQuestionnaireDefinitions(): Promise<QuestionnaireDefinition[]> { throw new NotImplementedError('listQuestionnaireDefinitions'); }
+  async listClientQuestionnaires(_clientId: string): Promise<QuestionnaireAssignment[]> { throw new NotImplementedError('listClientQuestionnaires'); }
+  async assignQuestionnaire(_clientId: string, _payload: { questionnaireId: string; cadence: QuestionnaireCadence; note?: string }): Promise<QuestionnaireAssignment> { throw new NotImplementedError('assignQuestionnaire'); }
+  async updateQuestionnaireStatus(_clientId: string, _assignmentId: string, _status: QuestionnaireStatus): Promise<void> { throw new NotImplementedError('updateQuestionnaireStatus'); }
+  async listQuestionnaireResponses(_clientId: string, _assignmentId: string): Promise<QuestionnaireResponse[]> { throw new NotImplementedError('listQuestionnaireResponses'); }
 }

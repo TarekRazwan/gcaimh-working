@@ -114,6 +114,65 @@ export interface OutcomeOverview {
 }
 
 // ---------------------------------------------------------------------------
+// Questionnaires
+// ---------------------------------------------------------------------------
+
+export type QuestionnaireCadence = 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY' | 'SESSION';
+export type QuestionnaireStatus = 'ACTIVE' | 'PAUSED' | 'REMOVED';
+
+export interface QuestionnaireDefinition {
+  id: string;
+  name: string;
+  shortName: string;
+  description: string;
+  itemCount: number;
+  maxScore: number;
+  estimatedMinutes: number;
+  category: 'DEPRESSION' | 'ANXIETY' | 'TRAUMA' | 'GENERAL' | 'SUBSTANCE' | 'FUNCTIONAL';
+  thresholds: { label: string; min: number; max: number; color: 'success' | 'info' | 'warning' | 'error' }[];
+}
+
+export interface QuestionnaireAssignment {
+  id: string;
+  clientId: string;
+  questionnaireId: string;
+  questionnaireName: string;
+  questionnaireShortName: string;
+  cadence: QuestionnaireCadence;
+  status: QuestionnaireStatus;
+  assignedAt: string;
+  pausedAt?: string;
+  removedAt?: string;
+  note?: string;
+  completionCount: number;
+  lastCompletedAt?: string;
+  nextDueAt?: string;
+}
+
+export interface QuestionnaireResponseItem {
+  itemIndex: number;
+  value: number;
+  label?: string;
+}
+
+export interface QuestionnaireResponse {
+  id: string;
+  clientId: string;
+  assignmentId: string;
+  questionnaireId: string;
+  questionnaireName: string;
+  weekOf: string;
+  completedAt: string;
+  items: QuestionnaireResponseItem[];
+  totalScore: number;
+  maxScore: number;
+  severity: string;
+  severityColor: 'success' | 'info' | 'warning' | 'error';
+  flagged: boolean;
+  flagReason?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Activity log
 // ---------------------------------------------------------------------------
 
@@ -126,7 +185,11 @@ export type ActivityEventType =
   | 'INTERVENTION_ARCHIVED'
   | 'SUMMARY_PUBLISHED'
   | 'SUMMARY_UNPUBLISHED'
-  | 'MODULE_SENT';
+  | 'MODULE_SENT'
+  | 'QUESTIONNAIRE_ASSIGNED'
+  | 'QUESTIONNAIRE_PAUSED'
+  | 'QUESTIONNAIRE_REMOVED'
+  | 'QUESTIONNAIRE_COMPLETED';
 
 export interface ActivityEvent {
   id: string;
@@ -211,4 +274,20 @@ export interface TherapistClientBridgeProvider {
 
   listModulesForAssignment(): Promise<ModuleForAssignment[]>;
   listInterventionsForAssignment(): Promise<InterventionForAssignment[]>;
+
+  listQuestionnaireDefinitions(): Promise<QuestionnaireDefinition[]>;
+  listClientQuestionnaires(clientId: string): Promise<QuestionnaireAssignment[]>;
+  assignQuestionnaire(
+    clientId: string,
+    payload: { questionnaireId: string; cadence: QuestionnaireCadence; note?: string }
+  ): Promise<QuestionnaireAssignment>;
+  updateQuestionnaireStatus(
+    clientId: string,
+    assignmentId: string,
+    status: QuestionnaireStatus
+  ): Promise<void>;
+  listQuestionnaireResponses(
+    clientId: string,
+    assignmentId: string
+  ): Promise<QuestionnaireResponse[]>;
 }
